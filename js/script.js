@@ -632,19 +632,19 @@ const box = document.querySelector('.description-block1');
 if (box) {
   const text = box.querySelector('.description-body');
   const btn = box.querySelector('.description-toggle');
-  const label = btn.querySelector('span');
-  function setExpanded(expanded) {
-    box.classList.toggle('is-collapsed', !expanded);
-    btn.setAttribute('aria-expanded', String(expanded));
-    label.textContent = expanded ? '- RÉDUIRE' : '+ LIRE LA SUITE';
+  function setExpanded() {
+    box.classList.remove('is-collapsed');
+    btn.hidden = true;
+    btn.setAttribute('aria-expanded', 'true');
     requestAnimationFrame(() => {
-    measureLayout();
-    requestAnimationFrame(() => {
-      requestScrollUpdate();
+      measureLayout();
+      requestAnimationFrame(() => {
+        requestScrollUpdate();
+      });
     });
-  });
   }
   function refreshDescriptionToggle() {
+    if (btn.hidden) return;
     const wasCollapsed = box.classList.contains('is-collapsed');
     box.classList.remove('is-collapsed');
     const fullHeight = text.scrollHeight;
@@ -656,12 +656,12 @@ if (box) {
       box.classList.remove('is-collapsed');
       btn.setAttribute('aria-expanded', 'true');
     } else if (!wasCollapsed) {
-      setExpanded(true);
+      setExpanded();
     }
   }
-  btn.addEventListener('click', () => {
-    setExpanded(box.classList.contains('is-collapsed'));
-  });
+  btn.addEventListener('click', setExpanded);
   refreshDescriptionToggle();
-  window.addEventListener('resize', refreshDescriptionToggle, { passive: true });
+  window.addEventListener('resize', refreshDescriptionToggle, {
+    passive: true
+  });
 }
