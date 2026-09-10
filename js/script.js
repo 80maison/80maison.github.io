@@ -385,7 +385,10 @@ function measureLayout() {
 const clamp = (value) => Math.min(1, Math.max(0, value));
 function updateScrollEffects() {
   const scrollY = window.scrollY;
-  const contactViewportTop = contactInRange && contact ? contactTop - scrollY : null;
+let contactViewportTop = null;
+if (contactInRange && contact) {
+  contactViewportTop = contact.getBoundingClientRect().top;
+}
   if (bg && heroContent && heroHeight) {
   if (scrollY < heroHeight) {
     const heroScroll = Math.min(scrollY, heroHeight);
@@ -634,6 +637,12 @@ if (box) {
     box.classList.toggle('is-collapsed', !expanded);
     btn.setAttribute('aria-expanded', String(expanded));
     label.textContent = expanded ? '- RÉDUIRE' : '+ LIRE LA SUITE';
+    requestAnimationFrame(() => {
+    measureLayout();
+    requestAnimationFrame(() => {
+      requestScrollUpdate();
+    });
+  });
   }
   function refreshDescriptionToggle() {
     const wasCollapsed = box.classList.contains('is-collapsed');
